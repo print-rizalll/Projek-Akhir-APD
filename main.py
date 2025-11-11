@@ -11,7 +11,6 @@ def clear():
     
 while d.run:
     if d.pengguna is None:
-        # --- MENU PRE-LOGIN ---
         tabel1 = PrettyTable()
         tabel1.field_names = ["=== Selamat Datang di Toko Obat Sehat ==="]
         tabel1.add_row(["1. Login"])
@@ -22,7 +21,6 @@ while d.run:
         clear()
         
         if pilihan == 1:
-            # --- Login ---
             username = input("Username: ").strip()
             password = input("Password: ").strip()
             
@@ -38,7 +36,6 @@ while d.run:
                 print("Username tidak ditemukan.")
                 
         elif pilihan == 2:
-            # --- Registrasi ---
             print("\n--- Registrasi Pengguna Baru ---")
             new_username = input("Masukkan Username Baru: ").strip()
             new_password = input("Masukkan Password: ").strip()
@@ -55,13 +52,11 @@ while d.run:
                     print(f"Registrasi {new_username} berhasil. Silakan Login.")
                     
         elif pilihan == 3:
-            # --- Keluar Program ---
             d.run = False
             print("Terima kasih, program diakhiri.")
             
     elif d.pengguna is not None:
         if d.role_pengguna == "apoteker":
-            # --- MENU ADMIN  ---
             tabel2 = PrettyTable()
             tabel2.field_names = ["=== Menu Admin ==="]
             tabel2.add_row(["1. Lihat Daftar Obat"])
@@ -72,8 +67,6 @@ while d.run:
             print (tabel2)
             opsi_menu = h.get_int_input("Pilih Opsi (1-5): ", 1, 5)
             
-            
-            # pilihan Menu Admin
             if opsi_menu == 1:
                 h.prosedur_tampilkan_obat_admin()
 
@@ -86,14 +79,12 @@ while d.run:
             elif opsi_menu == 4:
                 h.prosedur_hapus_obat() 
 
-            # 5. Logout
             elif opsi_menu == 5:
                 print(f"Pengguna {d.pengguna} berhasil logout.")
                 d.pengguna = None
                 d.role_pengguna = None
             
         elif d.role_pengguna == "user":
-            # --- MENU USER BIASA ---
             tabel3 = PrettyTable()
             tabel3.field_names = ["=== Menu ==="]
             tabel3.add_row(["1. Lihat Daftar Obat"])
@@ -102,12 +93,10 @@ while d.run:
             print(tabel3)
             opsi_menu = h.get_int_input("Pilih Opsi (1-3): ", 1, 3)
             
-            # Pilihan Menu User
             if opsi_menu == 1:
                 h.tampilkan_daftar_obat_user()
                 
             elif opsi_menu == 2:
-                # --- BELI OBAT ---
                 if h.cek_obat_kosong():
                     print("\nTidak ada obat yang tersedia untuk dibeli.")
                     continue
@@ -138,7 +127,6 @@ while d.run:
                         
                 h.proses_pembelian(kodeObat, jumlahBeli)
                 
-            # 3. Logout
             elif opsi_menu == 3:
                 print(f"Pengguna {d.pengguna} berhasil logout.")
                 d.pengguna = None

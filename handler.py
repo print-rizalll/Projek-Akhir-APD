@@ -1,4 +1,3 @@
-
 from prettytable import PrettyTable
 import data as d
 
@@ -17,11 +16,8 @@ def get_int_input(pilihan_opsi, min_nilai, max_nilai):
         except ValueError:
             print("Input harus berupa angka.")
 
-# Cek ketersediaan data obat
 def cek_obat_kosong():
     return not d.obat_data
-
-# --- FUNGSI USER ---
 
 def tampilkan_daftar_obat_user():
     print("\n--- Daftar Obat ---\n")
@@ -83,7 +79,6 @@ def proses_pembelian(kode_obat, jumlah_beli):
             return False
         jumlah_beli = jumlah_beli_baru
 
-    # Lakukan Transaksi
     data_obat['stok'] -= jumlah_beli
     total_harga = jumlah_beli * harga_satuan
     
@@ -98,9 +93,6 @@ def proses_pembelian(kode_obat, jumlah_beli):
     print(table_transaksi)
     return True
     
-# --- FUNGSI ADMIN ---
-
-# Menampilkan Daftar Obat Lengkap (Admin View)
 def prosedur_tampilkan_obat_admin():
     if cek_obat_kosong():
         print("Data obat kosong.")
@@ -118,8 +110,6 @@ def prosedur_tampilkan_obat_admin():
         
     print(table)
 
-
-# Proses Tambah Obat Baru
 def prosedur_tambah_obat_baru():
     print("\n--- Tambah Obat Baru ---")
     
@@ -128,7 +118,6 @@ def prosedur_tambah_obat_baru():
         print("Nama obat tidak boleh kosong. Penambahan dibatalkan.")
         return
 
-    # Validasi Stok
     while True:
         try:
             stok = int(input("Stok: ").strip())
@@ -139,7 +128,6 @@ def prosedur_tambah_obat_baru():
         except ValueError:
             print("Stok harus berupa angka.")
 
-    # Validasi Harga
     while True:
         try:
             harga = int(input("Harga: ").strip())
@@ -154,12 +142,10 @@ def prosedur_tambah_obat_baru():
     print(f"Obat '{nama}' berhasil ditambahkan dengan kode {d.next_kode_obat}.")
     d.next_kode_obat += 1
 
-# Proses Perbarui Obat (Stok/Harga)
 def prosedur_perbarui_obat():
     print("\n--- Perbarui Obat ---")
     prosedur_tampilkan_obat_admin()
 
-    # Input Kode Obat
     kodeObat = None
     while True:
         inputKode = input("Masukkan kode obat yang akan diubah: ").strip()
@@ -177,7 +163,6 @@ def prosedur_perbarui_obat():
 
         updated = False
         
-        # Cek dan update stok
         if stok_baru_str:
             try:
                 stokBaru = int(stok_baru_str)
@@ -189,7 +174,6 @@ def prosedur_perbarui_obat():
             except ValueError:
                 print("Stok harus berupa angka. Perubahan stok dibatalkan.")
 
-        # Cek dan update harga 
         if harga_baru_str:
             try:
                 hargaBaru = int(harga_baru_str)
@@ -203,7 +187,6 @@ def prosedur_perbarui_obat():
                 
         if updated:
             print(f"Kode obat {kodeObat} berhasil diperbarui. Data terbaru:")
-            # Tampilkan data obat yang baru diperbarui
             table_update = PrettyTable()
             table_update.field_names = ["Kode", "Nama Obat", "Stok", "Harga (Rp)"]
             table_update.align = "l"
@@ -217,7 +200,6 @@ def prosedur_perbarui_obat():
     else:
         print(f"Kode obat {kodeObat} tidak ditemukan.")
 
-# Proses Hapus Obat
 def prosedur_hapus_obat():
     print("\n--- Hapus Obat ---")
     prosedur_tampilkan_obat_admin()
