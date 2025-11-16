@@ -20,12 +20,12 @@ def cek_obat_kosong():
     return not d.obat_data
 
 def tampilkan_daftar_obat_user():
-    print("\n--- Daftar Obat ---\n")
     if cek_obat_kosong():
         print("Data obat kosong.")
         return False
     
     table = PrettyTable()
+    table.title = "Daftar Obat"
     table.field_names = ["Kode", "Nama Obat", "Harga (Rp)", "Stok"]
     table.align = "l"
 
@@ -81,6 +81,14 @@ def proses_pembelian(kode_obat, jumlah_beli):
 
     data_obat['stok'] -= jumlah_beli
     total_harga = jumlah_beli * harga_satuan
+
+    is_member = d.user_data[d.pengguna]["member"]
+    if is_member:
+        diskon = int(total_harga * 0.10)
+        total_setelah_diskon = total_harga - diskon
+    else:
+        diskon = 0
+        total_setelah_diskon = total_harga
     
     table_transaksi = PrettyTable()
     table_transaksi.field_names = ["Keterangan", "Nilai"]
@@ -88,6 +96,9 @@ def proses_pembelian(kode_obat, jumlah_beli):
     table_transaksi.add_row(["Obat", nama_obat])
     table_transaksi.add_row(["Jumlah", jumlah_beli])
     table_transaksi.add_row(["Total Harga (Rp)", f"{total_harga:,}"])
+    table_transaksi.add_row(["Diskon Member (Rp)", f"{diskon:,}"])
+    table_transaksi.add_row(["Total Bayar (Rp)", f"{total_setelah_diskon:,}"])
+
     
     print("\nPembelian berhasil:")
     print(table_transaksi)
@@ -97,10 +108,9 @@ def prosedur_tampilkan_obat_admin():
     if cek_obat_kosong():
         print("Data obat kosong.")
         return
-        
-    print("\n--- Daftar Obat (Admin) ---")
     
     table = PrettyTable()
+    table.title = "Daftar Obat (Admin)"
     table.field_names = ["Kode", "Nama Obat", "Stok", "Harga (Rp)"]
     table.align = "l"
 

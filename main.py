@@ -52,7 +52,7 @@ while d.run:
                 if len(new_password) < 4:
                     print("Password minimal 4 karakter.")
                 else:
-                    d.user_data[new_username] = {"password": new_password, "role": "user"}
+                    d.user_data[new_username] = {"password": new_password, "role": "user", "member": False}
                     print(f"Registrasi {new_username} berhasil. Silakan Login.")
 
         elif pilihan == "Keluar":
@@ -95,7 +95,7 @@ while d.run:
                 inquirer.List(
                     "opsi",
                     message="=== Menu Pengguna ===",
-                    choices=["Lihat Daftar Obat", "Beli Obat", "Logout"]
+                    choices=["Lihat Daftar Obat", "Beli Obat", "Daftar Member", "Logout"]
                 )
             ]
             jawaban = inquirer.prompt(menu_user)
@@ -103,6 +103,17 @@ while d.run:
 
             if opsi == "Lihat Daftar Obat":
                 h.tampilkan_daftar_obat_user()
+
+            elif opsi == "Daftar Member":
+                if d.user_data[d.pengguna]["member"]:
+                    print("Kamu sudah menjadi member!")
+                else:
+                    konfirmasi = input("Daftar jadi member? (y/n): ").strip().lower()
+                    if konfirmasi == "y":
+                        d.user_data[d.pengguna]["member"] = True
+                        print("Selamat! Kamu sekarang member (diskon 10%).")
+                    else:
+                        print("Pendaftaran member dibatalkan.")
 
             elif opsi == "Beli Obat":
                 if h.cek_obat_kosong():

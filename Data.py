@@ -1,6 +1,6 @@
 user_data = {
-    "apoteker": {"password": "1234", "role": "apoteker"},
-    "user": {"password": "2345", "role": "user"}
+    "apoteker": {"password": "1234", "role": "apoteker", "member": False},
+    "user": {"password": "2345", "role": "user", "member": False}
 }
 
 obat_data = {
