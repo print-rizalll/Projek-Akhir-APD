@@ -12,6 +12,7 @@ tabel1 = PrettyTable()
 tabel2 = PrettyTable()
 tabel3 = PrettyTable()
 
+
 def validasi_input_alphanumeric(prompt, min_length=1, max_length=None):
     while True:
         input_str = input(Fore.CYAN + prompt + Style.RESET_ALL).strip()
@@ -114,11 +115,34 @@ def tampilkan_banner():
     print(Fore.GREEN + "=" * 60 + Style.RESET_ALL)
 
 def header_box(text, warna=Fore.CYAN):
-    panjang = len(text) + 4
+    # Hitung panjang teks tanpa karakter emoji/unicode
+    import unicodedata
+    
+    # Fungsi untuk menghitung lebar visual teks
+    def hitung_lebar_visual(s):
+        lebar = 0
+        for char in s:
+            # Karakter emoji dan wide characters dihitung sebagai 2
+            if unicodedata.east_asian_width(char) in ('F', 'W'):
+                lebar += 2
+            # Karakter biasa dihitung sebagai 1
+            else:
+                lebar += 1
+        return lebar
+    
+    lebar_visual = hitung_lebar_visual(text)
+    panjang_box = lebar_visual + 4
+    
     print()
-    print(warna + "╔" + "═" * panjang + "╗")
-    print(warna + "║  " + Style.BRIGHT + text + Style.NORMAL + "  ║")
-    print(warna + "╚" + "═" * panjang + "╝" + Style.RESET_ALL)
+    print(warna + "╔" + "═" * panjang_box + "╗")
+    
+    # Hitung padding untuk centering
+    sisa_ruang = panjang_box - lebar_visual
+    padding_kiri = sisa_ruang // 2
+    padding_kanan = sisa_ruang - padding_kiri
+    
+    print(warna + "║" + " " * padding_kiri + Style.BRIGHT + text + Style.NORMAL + " " * padding_kanan + "║")
+    print(warna + "╚" + "═" * panjang_box + "╝" + Style.RESET_ALL)
     print()
 
 def pesan_sukses(text):
@@ -138,7 +162,7 @@ while d.run:
         menu_utama = [
             inquirer.List(
                 "pilihan",
-                message=Fore.CYAN + Style.BRIGHT + "🏠 MENU UTAMA" + Style.RESET_ALL,
+                message=Fore.CYAN + Style.BRIGHT + "MENU UTAMA" + Style.RESET_ALL,
                 choices=["Login", "Registrasi", "Keluar"]
             )
         ]
@@ -149,8 +173,8 @@ while d.run:
         if pilihan == "Login":
             header_box("LOGIN PENGGUNA", Fore.BLUE)
             
-            username = validasi_input_alphanumeric("👤 Username: ", min_length=1)
-            password = validasi_input_password("🔒 Password: ", min_length=1)
+            username = validasi_input_alphanumeric("Username: ", min_length=1)
+            password = validasi_input_password("Password: ", min_length=1)
 
             if username in d.user_data:
                 if d.user_data[username]["password"] == password:
@@ -169,12 +193,12 @@ while d.run:
         elif pilihan == "Registrasi":
             header_box("REGISTRASI PENGGUNA BARU", Fore.GREEN)
             
-            new_username = validasi_input_alphanumeric("👤 Username Baru: ", min_length=3, max_length=20)
+            new_username = validasi_input_alphanumeric("Username Baru: ", min_length=3, max_length=20)
             
             if new_username in d.user_data:
                 pesan_error("Username sudah terdaftar.")
             else:
-                new_password = validasi_input_password("🔒 Password: ", min_length=4)
+                new_password = validasi_input_password("Password: ", min_length=4)
                 
                 d.user_data[new_username] = {"password": new_password, "role": "user", "member": False}
                 pesan_sukses(f"Registrasi {new_username} berhasil. Silakan Login.")
@@ -186,7 +210,7 @@ while d.run:
             print(Fore.CYAN + Style.BRIGHT)
             print("╔═══════════════════════════════════════╗")
             print("║   Terima kasih telah menggunakan      ║")
-            print("║      🏥 TOKO OBAT SEHAT 🏥           ║")
+            print("║      🏥 TOKO OBAT SEHAT 🏥            ║")
             print("║         Semoga sehat selalu!          ║")
             print("╚═══════════════════════════════════════╝")
             print(Style.RESET_ALL)
@@ -195,7 +219,7 @@ while d.run:
     elif d.pengguna is not None:
         if d.role_pengguna == "apoteker":
             clear()
-            header_box(f"👨‍⚕️  ADMIN: {d.pengguna.upper()}", Fore.MAGENTA)
+            header_box(f"ADMIN: {d.pengguna.upper()}", Fore.MAGENTA)
             
             menu_admin = [
                 inquirer.List(
@@ -252,7 +276,7 @@ while d.run:
 
         elif d.role_pengguna == "user":
             clear()
-            header_box(f"👤 USER: {d.pengguna.upper()}", Fore.CYAN)
+            header_box(f"USER: {d.pengguna.upper()}", Fore.CYAN)
             
             if d.user_data[d.pengguna]["member"]:
                 print(Fore.YELLOW + "⭐ Status: MEMBER (Diskon 10%)" + Style.RESET_ALL)
@@ -343,3 +367,4 @@ while d.run:
                 d.pengguna = None
                 d.role_pengguna = None
                 input(Fore.YELLOW + "\nTekan Enter untuk kembali..." + Style.RESET_ALL)
+            
