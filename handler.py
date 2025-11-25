@@ -5,6 +5,82 @@ from colorama import Fore, Style, init
 
 init(autoreset=True)
 
+
+def validasi_input_angka_positif(prompt, allow_zero=False, allow_empty=False):
+    while True:
+        input_str = input(Fore.YELLOW + prompt + Style.RESET_ALL).strip()
+        
+        if not input_str:
+            if allow_empty:
+                return None
+            print(Fore.RED + "❌ Input tidak boleh kosong." + Style.RESET_ALL)
+            continue
+        
+        if not input_str.isdigit() and not (input_str[0] == '-' and input_str[1:].isdigit()):
+            print(Fore.RED + "❌ Input harus berupa angka saja, tidak boleh ada huruf atau simbol." + Style.RESET_ALL)
+            continue
+        
+        try:
+            nilai = int(input_str)
+            
+            if nilai < 0:
+                print(Fore.RED + "❌ Input tidak boleh berupa angka negatif." + Style.RESET_ALL)
+                continue
+            
+            if nilai == 0 and not allow_zero:
+                print(Fore.RED + "❌ Input tidak boleh nol (0)." + Style.RESET_ALL)
+                continue
+            
+            return nilai
+            
+        except ValueError:
+            print(Fore.RED + "❌ Input harus berupa angka yang valid." + Style.RESET_ALL)
+
+
+def validasi_nama_obat(prompt):
+    while True:
+        input_str = input(Fore.CYAN + prompt + Style.RESET_ALL).strip()
+        
+        if not input_str:
+            print(Fore.RED + "❌ Nama obat tidak boleh kosong." + Style.RESET_ALL)
+            continue
+        
+        if len(input_str) < 2:
+            print(Fore.RED + "❌ Nama obat minimal 2 karakter." + Style.RESET_ALL)
+            continue
+        
+        cleaned = input_str.replace(" ", "")
+        if not cleaned.isalnum():
+            print(Fore.RED + "❌ Nama obat hanya boleh berupa huruf, angka, dan spasi. Tidak boleh ada simbol." + Style.RESET_ALL)
+            continue
+        
+        if not any(c.isalpha() for c in input_str):
+            print(Fore.RED + "❌ Nama obat harus mengandung minimal satu huruf." + Style.RESET_ALL)
+            continue
+        
+        return input_str
+
+
+def validasi_input_pencarian(prompt):
+    while True:
+        input_str = input(Fore.CYAN + prompt + Style.RESET_ALL).strip()
+        
+        if not input_str:
+            print(Fore.RED + "❌ Kata kunci pencarian tidak boleh kosong." + Style.RESET_ALL)
+            continue
+        
+        if len(input_str) < 2:
+            print(Fore.RED + "❌ Kata kunci minimal 2 karakter." + Style.RESET_ALL)
+            continue
+        
+        cleaned = input_str.replace(" ", "")
+        if not cleaned.isalnum():
+            print(Fore.RED + "❌ Kata kunci hanya boleh berupa huruf, angka, dan spasi." + Style.RESET_ALL)
+            continue
+        
+        return input_str
+
+
 def get_int_input(pilihan_opsi, min_nilai, max_nilai):
     while True:
         input_str = input(Fore.YELLOW + pilihan_opsi + Style.RESET_ALL).strip()
@@ -64,25 +140,21 @@ def proses_pembelian(kode_obat, jumlah_beli):
         
         def minta_jumlah_ulang(nama_obat, max_stok):
             print(Fore.YELLOW + f"ℹ️  Mohon masukkan ulang jumlah pembelian untuk {nama_obat}. Maksimal {max_stok}." + Style.RESET_ALL)
-            try:
-                jumlah_baru_str = input(Fore.CYAN + "Jumlah Beli Baru (0 untuk batal): " + Style.RESET_ALL).strip()
-                if not jumlah_baru_str:
-                    return minta_jumlah_ulang(nama_obat, max_stok)
-                jumlah_baru = int(jumlah_baru_str)
-                if jumlah_baru == 0:
-                    print(Fore.YELLOW + "ℹ️  Pembelian dibatalkan." + Style.RESET_ALL)
-                    return 0
-                elif jumlah_baru < 0:
-                    print(Fore.RED + "❌ Jumlah tidak boleh negatif." + Style.RESET_ALL)
-                    return minta_jumlah_ulang(nama_obat, max_stok)
-                elif jumlah_baru > max_stok:
-                    print(Fore.RED + f"❌ Jumlah melebihi stok tersedia ({max_stok})." + Style.RESET_ALL)
-                    return minta_jumlah_ulang(nama_obat, max_stok) 
-                else:
-                    return jumlah_baru
-            except ValueError:
-                print(Fore.RED + "❌ Input harus berupa angka." + Style.RESET_ALL)
-                return minta_jumlah_ulang(nama_obat, max_stok)
+            
+            jumlah_baru = validasi_input_angka_positif(
+                "Jumlah Beli Baru (0 untuk batal): ", 
+                allow_zero=True, 
+                allow_empty=False
+            )
+            
+            if jumlah_baru == 0:
+                print(Fore.YELLOW + "ℹ️  Pembelian dibatalkan." + Style.RESET_ALL)
+                return 0
+            elif jumlah_baru > max_stok:
+                print(Fore.RED + f"❌ Jumlah melebihi stok tersedia ({max_stok})." + Style.RESET_ALL)
+                return minta_jumlah_ulang(nama_obat, max_stok) 
+            else:
+                return jumlah_baru
 
         jumlah_beli_baru = minta_jumlah_ulang(nama_obat, data_obat['stok'])
         if jumlah_beli_baru == 0:
@@ -130,9 +202,9 @@ def filter_obat_user():
         print(Fore.RED + "\n❌ Tidak ada obat yang tersedia." + Style.RESET_ALL)
         return
     
-    print(Fore.CYAN + "\n╔════════════════════════════════════════╗")
+    print(Fore.CYAN + "\n╔═══════════════════════════════════════╗")
     print(Fore.CYAN + "║     🔍 FILTER & CARI OBAT             ║")
-    print(Fore.CYAN + "╚════════════════════════════════════════╝" + Style.RESET_ALL)
+    print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
 
     menu_filter = [
         inquirer.List(
@@ -153,10 +225,7 @@ def filter_obat_user():
     opsi = jawaban["pilihan"]
 
     if opsi == "🔎 Cari berdasarkan Nama Obat":
-        keyword = input(Fore.CYAN + "🔍 Masukkan nama obat: " + Style.RESET_ALL).strip().lower()
-        if not keyword:
-            print(Fore.RED + "❌ Nama tidak boleh kosong." + Style.RESET_ALL)
-            return
+        keyword = validasi_input_pencarian("🔍 Masukkan nama obat: ").lower()
         
         hasil = {k: v for k, v in d.obat_data.items() if keyword in v["nama"].lower()}
         if not hasil:
@@ -190,9 +259,9 @@ def filter_obat_admin():
         print(Fore.RED + "\n❌ Tidak ada obat yang tersedia." + Style.RESET_ALL)
         return
 
-    print(Fore.MAGENTA + "\n╔════════════════════════════════════════╗")
+    print(Fore.MAGENTA + "\n╔═══════════════════════════════════════╗")
     print(Fore.MAGENTA + "║   🔍 FILTER & KELOLA OBAT (ADMIN)    ║")
-    print(Fore.MAGENTA + "╚════════════════════════════════════════╝" + Style.RESET_ALL)
+    print(Fore.MAGENTA + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
 
     menu_filter = [
         inquirer.List(
@@ -214,10 +283,7 @@ def filter_obat_admin():
     opsi = jawaban["pilihan"]
 
     if opsi == "🔎 Cari berdasarkan Nama Obat":
-        keyword = input(Fore.CYAN + "🔍 Masukkan nama obat: " + Style.RESET_ALL).strip().lower()
-        if not keyword:
-            print(Fore.RED + "❌ Nama tidak boleh kosong." + Style.RESET_ALL)
-            return
+        keyword = validasi_input_pencarian("🔍 Masukkan nama obat: ").lower()
         
         hasil = {k: v for k, v in d.obat_data.items() if keyword in v["nama"].lower()}
         if not hasil:
@@ -312,31 +378,10 @@ def prosedur_tampilkan_obat_admin():
     print(table)
 
 def prosedur_tambah_obat_baru():
-    nama = input(Fore.CYAN + "📝 Nama Obat: " + Style.RESET_ALL).strip()
-    if not nama:
-        print(Fore.RED + "❌ Nama obat tidak boleh kosong. Penambahan dibatalkan." + Style.RESET_ALL)
-        return
-
-    while True:
-        try:
-            stok = int(input(Fore.CYAN + "📦 Stok: " + Style.RESET_ALL).strip())
-            if stok >= 0:
-                break
-            else:
-                print(Fore.RED + "❌ Stok tidak boleh negatif." + Style.RESET_ALL)
-        except ValueError:
-            print(Fore.RED + "❌ Stok harus berupa angka." + Style.RESET_ALL)
-
-    while True:
-        try:
-            harga = int(input(Fore.CYAN + "💰 Harga: " + Style.RESET_ALL).strip())
-            if harga >= 0:
-                break
-            else:
-                print(Fore.RED + "❌ Harga tidak boleh negatif." + Style.RESET_ALL)
-        except ValueError:
-            print(Fore.RED + "❌ Harga harus berupa angka." + Style.RESET_ALL)
-            
+    nama = validasi_nama_obat("📝 Nama Obat: ")
+    stok = validasi_input_angka_positif("📦 Stok: ", allow_zero=True)
+    harga = validasi_input_angka_positif("💰 Harga: ", allow_zero=False)
+    
     d.obat_data[d.next_kode_obat] = {"nama": nama, "stok": stok, "harga": harga}
     print(Fore.GREEN + f"✅ Obat '{nama}' berhasil ditambahkan dengan kode {d.next_kode_obat}." + Style.RESET_ALL)
     d.next_kode_obat += 1
@@ -344,44 +389,32 @@ def prosedur_tambah_obat_baru():
 def prosedur_perbarui_obat():
     prosedur_tampilkan_obat_admin()
 
-    kodeObat = None
-    while True:
-        inputKode = input(Fore.YELLOW + "\n📝 Masukkan kode obat yang akan diubah: " + Style.RESET_ALL).strip()
-        try:
-            kodeObat = int(inputKode)
-            break
-        except ValueError:
-            print(Fore.RED + "❌ Kode obat harus berupa angka." + Style.RESET_ALL)
+    kodeObat = validasi_input_angka_positif("\n🔍 Masukkan kode obat yang akan diubah: ", allow_zero=False)
             
     if kodeObat in d.obat_data:
         print(Fore.CYAN + f"📋 Obat yang dipilih: {d.obat_data[kodeObat]['nama']}" + Style.RESET_ALL)
         
-        stok_baru_str = input(Fore.YELLOW + "📦 Stok Baru (kosongkan jika tidak diubah): " + Style.RESET_ALL).strip()
-        harga_baru_str = input(Fore.YELLOW + "💰 Harga Baru (kosongkan jika tidak diubah): " + Style.RESET_ALL).strip()
+        stok_baru = validasi_input_angka_positif(
+            "📦 Stok Baru (kosongkan jika tidak diubah): ", 
+            allow_zero=True, 
+            allow_empty=True
+        )
+        
+        harga_baru = validasi_input_angka_positif(
+            "💰 Harga Baru (kosongkan jika tidak diubah): ", 
+            allow_zero=False, 
+            allow_empty=True
+        )
 
         updated = False
         
-        if stok_baru_str:
-            try:
-                stokBaru = int(stok_baru_str)
-                if stokBaru >= 0:
-                    d.obat_data[kodeObat]['stok'] = stokBaru
-                    updated = True
-                else:
-                    print(Fore.RED + "❌ Stok tidak boleh negatif. Perubahan stok dibatalkan." + Style.RESET_ALL)
-            except ValueError:
-                print(Fore.RED + "❌ Stok harus berupa angka. Perubahan stok dibatalkan." + Style.RESET_ALL)
+        if stok_baru is not None:
+            d.obat_data[kodeObat]['stok'] = stok_baru
+            updated = True
 
-        if harga_baru_str:
-            try:
-                hargaBaru = int(harga_baru_str)
-                if hargaBaru >= 0:
-                    d.obat_data[kodeObat]['harga'] = hargaBaru
-                    updated = True
-                else:
-                    print(Fore.RED + "❌ Harga tidak boleh negatif. Perubahan harga dibatalkan." + Style.RESET_ALL)
-            except ValueError:
-                print(Fore.RED + "❌ Harga harus berupa angka. Perubahan harga dibatalkan." + Style.RESET_ALL)
+        if harga_baru is not None:
+            d.obat_data[kodeObat]['harga'] = harga_baru
+            updated = True
                 
         if updated:
             print(Fore.GREEN + f"\n✅ Kode obat {kodeObat} berhasil diperbarui. Data terbaru:" + Style.RESET_ALL)
@@ -399,21 +432,14 @@ def prosedur_perbarui_obat():
             table_update.add_row([kodeObat, obat_diperbarui['nama'], stok_display, harga_formatted])
             print(table_update)
             
-        elif not stok_baru_str and not harga_baru_str:
+        else:
             print(Fore.YELLOW + "ℹ️  Tidak ada perubahan dilakukan." + Style.RESET_ALL)
     else:
         print(Fore.RED + f"❌ Kode obat {kodeObat} tidak ditemukan." + Style.RESET_ALL)
 
 def prosedur_hapus_obat():
     prosedur_tampilkan_obat_admin()
-    kodeObat = None
-    while True:
-        inputKode = input(Fore.YELLOW + "\n🗑️  Masukkan kode obat yang akan dihapus: " + Style.RESET_ALL).strip()
-        try:
-            kodeObat = int(inputKode)
-            break
-        except ValueError:
-            print(Fore.RED + "❌ Kode obat harus berupa angka." + Style.RESET_ALL)
+    kodeObat = validasi_input_angka_positif("\n🗑️  Masukkan kode obat yang akan dihapus: ", allow_zero=False)
     
     if kodeObat in d.obat_data:
         nama_obat_hapus = d.obat_data[kodeObat]['nama']
