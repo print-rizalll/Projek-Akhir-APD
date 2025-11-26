@@ -96,9 +96,9 @@ while d.run:
             clear()
             print(Fore.CYAN + Style.BRIGHT)
             print("╔════════════════════════════════════════╗")
-            print("║   Terima kasih telah menggunakan      ║")
-            print("║      🏥 TOKO OBAT SEHAT 🏥           ║")
-            print("║         Semoga sehat selalu!          ║")
+            print("║    Terima kasih telah menggunakan      ║")
+            print("║             TOKO OBAT SEHAT            ║")
+            print("║          Semoga sehat selalu!          ║")
             print("╚════════════════════════════════════════╝")
             print(Style.RESET_ALL)
             d.run = False
