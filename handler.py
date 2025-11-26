@@ -378,7 +378,51 @@ def prosedur_tampilkan_obat_admin():
     print(table)
 
 def prosedur_tambah_obat_baru():
-    nama = validasi_nama_obat("📝 Nama Obat: ")
+    nama = validasi_nama_obat("🔖 Nama Obat: ")
+
+    nama_lower = nama.lower()
+    obat_existing = None
+    kode_existing = None
+    
+    for kode, data_obat in d.obat_data.items():
+        if data_obat['nama'].lower() == nama_lower:
+            obat_existing = data_obat
+            kode_existing = kode
+            break
+    
+    if obat_existing:
+        print(Fore.YELLOW + "⚠️  Obat sudah ada dalam database!" + Style.RESET_ALL)
+        print(Fore.CYAN + f"ℹ️  Nama: {obat_existing['nama']}" + Style.RESET_ALL)
+        print(Fore.CYAN + f"ℹ️  Kode: {kode_existing}" + Style.RESET_ALL)
+        print(Fore.CYAN + f"ℹ️  Stok saat ini: {obat_existing['stok']}" + Style.RESET_ALL)
+        print(Fore.CYAN + f"ℹ️  Harga saat ini: Rp {obat_existing['harga']:,}" + Style.RESET_ALL)
+        print()
+        
+        from main import validasi_konfirmasi_yn
+        konfirmasi = validasi_konfirmasi_yn("Apakah ingin menambah stok obat ini? (y/n): ")
+        
+        if konfirmasi:
+            stok_tambahan = validasi_input_angka_positif("📦 Jumlah stok yang ditambahkan: ", allow_zero=False)
+            
+            stok_lama = obat_existing['stok']
+            obat_existing['stok'] += stok_tambahan
+            
+            print(Fore.GREEN + f"\n✅ Stok berhasil ditambahkan!" + Style.RESET_ALL)
+            print(Fore.CYAN + f"   • Stok lama: {stok_lama}" + Style.RESET_ALL)
+            print(Fore.CYAN + f"   • Ditambah: +{stok_tambahan}" + Style.RESET_ALL)
+            print(Fore.GREEN + f"   • Stok baru: {obat_existing['stok']}" + Style.RESET_ALL)
+            
+            update_harga = validasi_konfirmasi_yn("\nApakah ingin mengubah harga juga? (y/n): ")
+            if update_harga:
+                harga_baru = validasi_input_angka_positif("💰 Harga baru: ", allow_zero=False)
+                harga_lama = obat_existing['harga']
+                obat_existing['harga'] = harga_baru
+                print(Fore.GREEN + f"✅ Harga diubah dari Rp {harga_lama:,} → Rp {harga_baru:,}" + Style.RESET_ALL)
+        else:
+            print(Fore.YELLOW + "ℹ️  Penambahan stok dibatalkan." + Style.RESET_ALL)
+        
+        return
+    
     stok = validasi_input_angka_positif("📦 Stok: ", allow_zero=True)
     harga = validasi_input_angka_positif("💰 Harga: ", allow_zero=False)
     
