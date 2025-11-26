@@ -9,10 +9,14 @@ obat_data = {
     103: {"nama": "Komix", "stok": 20, "harga": 10000},
     104: {"nama": "OBH", "stok": 15, "harga": 13000},
     105: {"nama": "Tremenza", "stok": 20, "harga": 20000},
-    106: {"nama": "Omeprazol", "stok": 13, "harga": 15000}
+    106: {"nama": "Omeprazol", "stok": 13, "harga": 15000},
+    107: {"nama": "Promag", "stok": 25, "harga": 10000},
+    108: {"nama": "Vitamin C Redoxon", "stok": 20, "harga": 40000},
+    109: {"nama": "Betadine", "stok": 30, "harga": 10000},
+    110: {"nama": "Combatrin", "stok": 25, "harga": 0000},
 }
 
-next_kode_obat = 107
+next_kode_obat = 111
 pengguna = None
 role_pengguna = None
 run = True
