@@ -208,19 +208,12 @@ while d.run:
         elif pilihan == "Keluar":
             clear()
             print(Fore.CYAN + Style.BRIGHT)
-<<<<<<< HEAD
             print("╔════════════════════════════════════════╗")
             print("║    Terima kasih telah menggunakan      ║")
             print("║             TOKO OBAT SEHAT            ║")
             print("║          Semoga sehat selalu!          ║")
             print("╚════════════════════════════════════════╝")
-=======
-            print("╔═══════════════════════════════════════╗")
-            print("║   Terima kasih telah menggunakan      ║")
-            print("║      🏥 TOKO OBAT SEHAT 🏥            ║")
-            print("║         Semoga sehat selalu!          ║")
-            print("╚═══════════════════════════════════════╝")
->>>>>>> d498a503e0340641e641e6e85ea3370ccc8a53c1
+
             print(Style.RESET_ALL)
             d.run = False
 

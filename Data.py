@@ -13,7 +13,7 @@ obat_data = {
     107: {"nama": "Promag", "stok": 25, "harga": 10000},
     108: {"nama": "Vitamin C Redoxon", "stok": 20, "harga": 40000},
     109: {"nama": "Betadine", "stok": 30, "harga": 10000},
-    110: {"nama": "Combatrin", "stok": 25, "harga": 0000},
+    110: {"nama": "Combatrin", "stok": 25, "harga": 25000},
 }
 
 next_kode_obat = 111
