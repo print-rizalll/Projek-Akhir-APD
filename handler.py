@@ -4,9 +4,10 @@ import inquirer
 from colorama import Fore, Style, init
 
 init(autoreset=True)
+BATAS_STOK = 10000
+BATAS_HARGA = 10000000
 
-
-def validasi_input_angka_positif(prompt, allow_zero=False, allow_empty=False):
+def validasi_input_angka_positif(prompt, allow_zero=False, allow_empty=False, max_value=None):
     while True:
         input_str = input(Fore.YELLOW + prompt + Style.RESET_ALL).strip()
         
@@ -29,6 +30,10 @@ def validasi_input_angka_positif(prompt, allow_zero=False, allow_empty=False):
             
             if nilai == 0 and not allow_zero:
                 print(Fore.RED + "❌ Input tidak boleh nol (0)." + Style.RESET_ALL)
+                continue
+            
+            if max_value is not None and nilai > max_value:
+                print(Fore.RED + f"❌ Input melebihi batas maksimal ({max_value:,})." + Style.RESET_ALL)
                 continue
             
             return nilai
@@ -225,9 +230,13 @@ def filter_obat_user():
     opsi = jawaban["pilihan"]
 
     if opsi == "🔎 Cari berdasarkan Nama Obat":
-        keyword = validasi_input_pencarian("🔍 Masukkan nama obat: ").lower()
+        keyword = validasi_input_pencarian("🔍 Masukkan nama obat: ")
+        keyword_lower = keyword.lower().strip()  # CASE-INSENSITIVE
         
-        hasil = {k: v for k, v in d.obat_data.items() if keyword in v["nama"].lower()}
+        # Pencarian case-insensitive
+        hasil = {k: v for k, v in d.obat_data.items() 
+                if keyword_lower in v["nama"].lower()}
+        
         if not hasil:
             print(Fore.RED + f"❌ Tidak ditemukan obat dengan nama '{keyword}'." + Style.RESET_ALL)
             return
@@ -260,7 +269,7 @@ def filter_obat_admin():
         return
 
     print(Fore.MAGENTA + "\n╔═══════════════════════════════════════╗")
-    print(Fore.MAGENTA + "║   FILTER & KELOLA OBAT (ADMIN)        ║")
+    print(Fore.MAGENTA + "║   🔍 FILTER & KELOLA OBAT (ADMIN)    ║")
     print(Fore.MAGENTA + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
 
     menu_filter = [
@@ -283,9 +292,13 @@ def filter_obat_admin():
     opsi = jawaban["pilihan"]
 
     if opsi == "🔎 Cari berdasarkan Nama Obat":
-        keyword = validasi_input_pencarian("🔍 Masukkan nama obat: ").lower()
+        keyword = validasi_input_pencarian("🔍 Masukkan nama obat: ")
+        keyword_lower = keyword.lower().strip()  # CASE-INSENSITIVE
         
-        hasil = {k: v for k, v in d.obat_data.items() if keyword in v["nama"].lower()}
+        # Pencarian case-insensitive
+        hasil = {k: v for k, v in d.obat_data.items() 
+                 if keyword_lower in v["nama"].lower()}
+        
         if not hasil:
             print(Fore.RED + f"❌ Tidak ditemukan obat dengan nama '{keyword}'." + Style.RESET_ALL)
             return
@@ -311,7 +324,7 @@ def filter_obat_admin():
     elif opsi == "🔴 Stok Rendah (< 20)":
         stok_rendah = {k: v for k, v in d.obat_data.items() if v["stok"] < 20}
         if not stok_rendah:
-            print(Fore.GREEN + "Semua obat memiliki stok mencukupi." + Style.RESET_ALL)
+            print(Fore.GREEN + "✅ Semua obat memiliki stok mencukupi." + Style.RESET_ALL)
             return
 
         tampilkan_hasil_filter_admin(stok_rendah.items(), "🔴 Stok Rendah (< 20)")
@@ -378,14 +391,14 @@ def prosedur_tampilkan_obat_admin():
     print(table)
 
 def prosedur_tambah_obat_baru():
-    nama = validasi_nama_obat("🔖 Nama Obat: ")
+    nama = validasi_nama_obat("📖 Nama Obat: ")
 
-    nama_lower = nama.lower()
+    nama_lower = nama.lower().strip()
     obat_existing = None
     kode_existing = None
     
     for kode, data_obat in d.obat_data.items():
-        if data_obat['nama'].lower() == nama_lower:
+        if data_obat['nama'].lower().strip() == nama_lower:
             obat_existing = data_obat
             kode_existing = kode
             break
@@ -402,7 +415,11 @@ def prosedur_tambah_obat_baru():
         konfirmasi = validasi_konfirmasi_yn("Apakah ingin menambah stok obat ini? (y/n): ")
         
         if konfirmasi:
-            stok_tambahan = validasi_input_angka_positif("📦 Jumlah stok yang ditambahkan: ", allow_zero=False)
+            stok_tambahan = validasi_input_angka_positif(
+                f"📦 Jumlah stok yang ditambahkan (Maks {BATAS_STOK:,}): ", 
+                allow_zero=False,
+                max_value=BATAS_STOK
+            )
             
             stok_lama = obat_existing['stok']
             obat_existing['stok'] += stok_tambahan
@@ -414,7 +431,11 @@ def prosedur_tambah_obat_baru():
             
             update_harga = validasi_konfirmasi_yn("\nApakah ingin mengubah harga juga? (y/n): ")
             if update_harga:
-                harga_baru = validasi_input_angka_positif("💰 Harga baru: ", allow_zero=False)
+                harga_baru = validasi_input_angka_positif(
+                    f"💰 Harga baru (Maks Rp {BATAS_HARGA:,}): ", 
+                    allow_zero=False,
+                    max_value=BATAS_HARGA
+                )
                 harga_lama = obat_existing['harga']
                 obat_existing['harga'] = harga_baru
                 print(Fore.GREEN + f"✅ Harga diubah dari Rp {harga_lama:,} → Rp {harga_baru:,}" + Style.RESET_ALL)
@@ -423,8 +444,16 @@ def prosedur_tambah_obat_baru():
         
         return
     
-    stok = validasi_input_angka_positif("📦 Stok: ", allow_zero=True)
-    harga = validasi_input_angka_positif("💰 Harga: ", allow_zero=False)
+    stok = validasi_input_angka_positif(
+        f"📦 Stok (Maks {BATAS_STOK:,}): ", 
+        allow_zero=True,
+        max_value=BATAS_STOK
+    )
+    harga = validasi_input_angka_positif(
+        f"💰 Harga (Maks Rp {BATAS_HARGA:,}): ", 
+        allow_zero=False,
+        max_value=BATAS_HARGA
+    )
     
     d.obat_data[d.next_kode_obat] = {"nama": nama, "stok": stok, "harga": harga}
     print(Fore.GREEN + f"✅ Obat '{nama}' berhasil ditambahkan dengan kode {d.next_kode_obat}." + Style.RESET_ALL)
@@ -437,17 +466,23 @@ def prosedur_perbarui_obat():
             
     if kodeObat in d.obat_data:
         print(Fore.CYAN + f"📋 Obat yang dipilih: {d.obat_data[kodeObat]['nama']}" + Style.RESET_ALL)
-        
+        print(Fore.YELLOW + f"\nℹ️  Batas Maksimal:" + Style.RESET_ALL)
+        print(Fore.CYAN + f"   • Stok maksimal: {BATAS_STOK:,}" + Style.RESET_ALL)
+        print(Fore.CYAN + f"   • Harga maksimal: Rp {BATAS_HARGA:,}" + Style.RESET_ALL)
+        print()
+
         stok_baru = validasi_input_angka_positif(
-            "📦 Stok Baru (kosongkan jika tidak diubah): ", 
+            f"📦 Stok Baru (Maks {BATAS_STOK:,}, kosongkan jika tidak diubah): ", 
             allow_zero=True, 
-            allow_empty=True
+            allow_empty=True,
+            max_value=BATAS_STOK
         )
         
         harga_baru = validasi_input_angka_positif(
-            "💰 Harga Baru (kosongkan jika tidak diubah): ", 
+            f"💰 Harga Baru (Maks Rp {BATAS_HARGA:,}, kosongkan jika tidak diubah): ", 
             allow_zero=False, 
-            allow_empty=True
+            allow_empty=True,
+            max_value=BATAS_HARGA
         )
 
         updated = False

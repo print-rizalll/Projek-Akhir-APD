@@ -115,17 +115,13 @@ def tampilkan_banner():
     print(Fore.GREEN + "=" * 60 + Style.RESET_ALL)
 
 def header_box(text, warna=Fore.CYAN):
-    # Hitung panjang teks tanpa karakter emoji/unicode
     import unicodedata
     
-    # Fungsi untuk menghitung lebar visual teks
     def hitung_lebar_visual(s):
         lebar = 0
         for char in s:
-            # Karakter emoji dan wide characters dihitung sebagai 2
             if unicodedata.east_asian_width(char) in ('F', 'W'):
                 lebar += 2
-            # Karakter biasa dihitung sebagai 1
             else:
                 lebar += 1
         return lebar
@@ -136,7 +132,6 @@ def header_box(text, warna=Fore.CYAN):
     print()
     print(warna + "╔" + "═" * panjang_box + "╗")
     
-    # Hitung padding untuk centering
     sisa_ruang = panjang_box - lebar_visual
     padding_kiri = sisa_ruang // 2
     padding_kanan = sisa_ruang - padding_kiri
