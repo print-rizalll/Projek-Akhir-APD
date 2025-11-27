@@ -79,31 +79,6 @@ def validasi_input_angka_positif(prompt, allow_zero=False):
         except ValueError:
             print(Fore.RED + "❌ Input harus berupa angka yang valid." + Style.RESET_ALL)
 
-
-def validasi_konfirmasi_yn(prompt):
-    while True:
-        input_str = input(Fore.YELLOW + prompt + Style.RESET_ALL).strip().lower()
-        
-        if not input_str:
-            print(Fore.RED + "❌ Input tidak boleh kosong. Ketik 'y' untuk Ya atau 'n' untuk Tidak." + Style.RESET_ALL)
-            continue
-        
-        if len(input_str) > 1:
-            print(Fore.RED + "❌ Input harus 'y' atau 'n' saja." + Style.RESET_ALL)
-            continue
-        
-        if not input_str.isalpha():
-            print(Fore.RED + "❌ Input harus berupa huruf 'y' atau 'n', tidak boleh angka atau simbol." + Style.RESET_ALL)
-            continue
-        
-        if input_str == 'y':
-            return True
-        elif input_str == 'n':
-            return False
-        else:
-            print(Fore.RED + "❌ Input tidak valid. Ketik 'y' untuk Ya atau 'n' untuk Tidak." + Style.RESET_ALL)
-
-
 def clear():
     os.system("cls || clear")
 

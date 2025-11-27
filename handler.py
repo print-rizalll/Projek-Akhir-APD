@@ -7,6 +7,29 @@ init(autoreset=True)
 BATAS_STOK = 10000
 BATAS_HARGA = 10000000
 
+def validasi_konfirmasi_yn(prompt):
+    while True:
+        input_str = input(Fore.YELLOW + prompt + Style.RESET_ALL).strip().lower()
+        
+        if not input_str:
+            print(Fore.RED + "❌ Input tidak boleh kosong. Ketik 'y' untuk Ya atau 'n' untuk Tidak." + Style.RESET_ALL)
+            continue
+        
+        if len(input_str) > 1:
+            print(Fore.RED + "❌ Input harus 'y' atau 'n' saja." + Style.RESET_ALL)
+            continue
+        
+        if not input_str.isalpha():
+            print(Fore.RED + "❌ Input harus berupa huruf 'y' atau 'n', tidak boleh angka atau simbol." + Style.RESET_ALL)
+            continue
+        
+        if input_str == 'y':
+            return True
+        elif input_str == 'n':
+            return False
+        else:
+            print(Fore.RED + "❌ Input tidak valid. Ketik 'y' untuk Ya atau 'n' untuk Tidak." + Style.RESET_ALL)
+
 def validasi_input_angka_positif(prompt, allow_zero=False, allow_empty=False, max_value=None):
     while True:
         input_str = input(Fore.YELLOW + prompt + Style.RESET_ALL).strip()
@@ -297,7 +320,7 @@ def filter_obat_admin():
         
         # Pencarian case-insensitive
         hasil = {k: v for k, v in d.obat_data.items() 
-                 if keyword_lower in v["nama"].lower()}
+                if keyword_lower in v["nama"].lower()}
         
         if not hasil:
             print(Fore.RED + f"❌ Tidak ditemukan obat dengan nama '{keyword}'." + Style.RESET_ALL)
@@ -411,7 +434,6 @@ def prosedur_tambah_obat_baru():
         print(Fore.CYAN + f"ℹ️  Harga saat ini: Rp {obat_existing['harga']:,}" + Style.RESET_ALL)
         print()
         
-        from main import validasi_konfirmasi_yn
         konfirmasi = validasi_konfirmasi_yn("Apakah ingin menambah stok obat ini? (y/n): ")
         
         if konfirmasi:
