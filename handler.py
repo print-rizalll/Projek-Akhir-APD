@@ -466,7 +466,7 @@ def prosedur_tambah_obat_baru():
     
     stok = validasi_input_angka_positif(
         f"📦 Stok (Maks {BATAS_STOK:,}): ", 
-        allow_zero=True,
+        allow_zero=False,
         max_value=BATAS_STOK
     )
     harga = validasi_input_angka_positif(
