@@ -254,9 +254,8 @@ def filter_obat_user():
 
     if opsi == "🔎 Cari berdasarkan Nama Obat":
         keyword = validasi_input_pencarian("🔍 Masukkan nama obat: ")
-        keyword_lower = keyword.lower().strip()  # CASE-INSENSITIVE
+        keyword_lower = keyword.lower().strip() 
         
-        # Pencarian case-insensitive
         hasil = {k: v for k, v in d.obat_data.items() 
                 if keyword_lower in v["nama"].lower()}
         
@@ -316,9 +315,8 @@ def filter_obat_admin():
 
     if opsi == "🔎 Cari berdasarkan Nama Obat":
         keyword = validasi_input_pencarian("🔍 Masukkan nama obat: ")
-        keyword_lower = keyword.lower().strip()  # CASE-INSENSITIVE
+        keyword_lower = keyword.lower().strip()  
         
-        # Pencarian case-insensitive
         hasil = {k: v for k, v in d.obat_data.items() 
                 if keyword_lower in v["nama"].lower()}
         
