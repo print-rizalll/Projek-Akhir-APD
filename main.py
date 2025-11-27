@@ -211,6 +211,7 @@ while d.run:
 
             print(Style.RESET_ALL)
             d.run = False
+            exit()
 
     elif d.pengguna is not None:
         if d.role_pengguna == "apoteker":
