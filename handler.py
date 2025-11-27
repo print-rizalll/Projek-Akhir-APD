@@ -260,7 +260,7 @@ def filter_obat_admin():
         return
 
     print(Fore.MAGENTA + "\n╔═══════════════════════════════════════╗")
-    print(Fore.MAGENTA + "║   🔍 FILTER & KELOLA OBAT (ADMIN)    ║")
+    print(Fore.MAGENTA + "║   FILTER & KELOLA OBAT (ADMIN)        ║")
     print(Fore.MAGENTA + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
 
     menu_filter = [
